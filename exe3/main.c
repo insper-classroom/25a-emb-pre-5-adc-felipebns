@@ -30,24 +30,21 @@ void process_task(void *p) {
 
     while (true) {
         if (xQueueReceive(xQueueData, &data, 100)) {
-            // implementar filtro aqui!
-            if (cont < 5) {
-                dados[cont] = data;
-                if (cont == 4){
-                    float y = (dados[4] + dados[3] + dados[2] + dados[1] + dados[0])/5;
-                    printf("Média movel: %f\n", y);
-                }
-            } else {
-                dados[0] = dados[1];
-                dados[1] = dados[2];
-                dados[2] = dados[3];
-                dados[3] = dados[4];
-                dados[4] = data;
-                float y = (dados[4] + dados[3] + dados[2] + dados[1] + dados[0])/5;
-                printf("Média movel: %f\n", y);
+            // Adiciona novo dado na janela
+            dados[0] = dados[1];
+            dados[1] = dados[2];
+            dados[2] = dados[3];
+            dados[3] = dados[4];
+            dados[4] = data;
+
+            // Apenas calcula a média se tivermos pelo menos 5 amostras válidas
+            if (cont >= 4) {
+                float y = (dados[0] + dados[1] + dados[2] + dados[3] + dados[4]) / 5.0;
+                printf("Média móvel: %.2f\n", y);
             }
-            cont ++;
-            // deixar esse delay!
+            cont++;
+
+            // Manter o delay
             vTaskDelay(pdMS_TO_TICKS(50));
         }
     }
